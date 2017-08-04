@@ -10,3 +10,4 @@ c_cpp_properties.json
 .vs/
 
 CMakeSettings.json
+/.metadata/
