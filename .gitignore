@@ -3,5 +3,6 @@
 !*.cpp
 !*.py
 !*/
+!.editorconfig
 
 build/
