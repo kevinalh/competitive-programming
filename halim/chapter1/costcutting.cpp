@@ -1,3 +1,8 @@
+/*
+UVa
+11727 - Cost Cutting
+*/
+
 #include <iostream>
 #include <string>
 #include <vector>
