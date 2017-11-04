@@ -11,9 +11,11 @@ using namespace std;
 #define fastio() ios_base::sync_with_stdio(false); cin.tie(NULL)
 typedef unsigned long long ull;
 typedef long long ll;
-typedef pair<int, int> pii;
+typedef pair<int, int> ii;
+typedef vector<ii> vii;
+typedef vector<int> vi;
 
 int main() {
 
-	return;
+	return 0;
 }
