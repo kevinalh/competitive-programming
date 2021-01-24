@@ -38,7 +38,7 @@ if __name__ == '__main__':
 				(b * troy[0]) % mod
 			) % mod
 			p[r + 1] = (p[r + 1] - troy[r - l + 1]) % mod
-			p[r + 2] = (p[r + 2] + (a * troy[r - l]) % mod) % mod
+			p[r + 2] = (p[r + 2] - (a * troy[r - l]) % mod) % mod
 		else:
 			p[r + 1] = (p[r + 1] - (b * troy[0]) % mod) % mod
 			p[r + 2] = (p[r + 2] - (a * troy[0]) % mod) % mod
