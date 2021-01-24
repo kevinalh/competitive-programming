@@ -1,58 +1,13 @@
 """Troynacci Query
 https://codeforces.com/gym/100571/problem/B
 """
-from typing import List
+import sys
+import io
+import os
 
 
 mod = (10**9) + 7
-
-class Solution:
-
-	def __init__(self, a: int, b: int, x: List[int], troy: List[int], n: int) -> None:
-		self.a = a
-		self.b = b
-		self.troy = troy
-		self.x = x
-		self.n = n
-		self.p = [0] * (self.n + 5)
-
-	def update_from_bounds(self, l: int, r: int) -> None:
-		l -= 1
-		r -= 1
-		# First we do the obvious first update
-		self.p[l] = (self.p[l] + self.troy[0]) % mod
-		# Next, we update according to whether we are updating a single field or not
-		if r > l:
-			self.p[l + 1] = (
-				(self.p[l + 1] + self.troy[1]) % mod -
-				(self.b * self.troy[0]) % mod
-			) % mod
-			self.p[r + 1] = (self.p[r + 1] - self.troy[r - l + 1]) % mod
-			self.p[r + 2] = (self.p[r + 2] + (self.a * self.troy[r - l]) % mod) % mod
-		elif r == l:
-			self.p[r + 1] = (self.p[r + 1] - (self.b * self.troy[0]) % mod) % mod
-			self.p[r + 2] = (self.p[r + 2] - (self.a * self.troy[0]) % mod) % mod
-
-	def sum_all(self) -> None:
-		if self.n > 1:
-			self.p[1] = (self.p[1] + (self.b * self.p[0]) % mod) % mod
-		for i in range(2, self.n):
-			self.p[i] = (self.p[i] + (
-				self.a * self.p[i - 2]
-			) % mod + (
-				self.b * self.p[i - 1]
-			) % mod) % mod
-		for i in range(0, self.n):
-			self.x[i] = (self.x[i] + self.p[i]) % mod
-
-
-def compute_troynacci(f1: int, f2: int, a: int, b: int, n: int) -> List[int]:
-	troy = [0] * (n + 5)
-	troy[0] = f1
-	troy[1] = f2
-	for i in range(2, n):
-		troy[i] = (a * troy[i - 2] + b * troy[i - 1]) % mod
-	return troy
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
 
 if __name__ == '__main__':
@@ -61,10 +16,44 @@ if __name__ == '__main__':
 	f1, f2 = map(int, input().split())
 	a, b = map(int, input().split())
 	x = list(map(int, input().split()))
-	# Array of zeroes for keeping track of changes
-	troy = compute_troynacci(f1, f2, a, b, n + 2)
-	sol = Solution(a, b, x, troy, n)
+
+	troy = [0] * (n + 5)
+	troy[0] = f1
+	troy[1] = f2
+	for i in range(2, n):
+		troy[i] = (a * troy[i - 2] + b * troy[i - 1]) % mod
+
+	p = [0] * (n + 2)
+
 	for _ in range(q):
-		sol.update_from_bounds(*(map(int, input().split())))
-	sol.sum_all()
-	print(' '.join(map(str, sol.x[:n])))
+		l, r = map(int, input().split())
+		l -= 1
+		r -= 1
+		# First we do the obvious first update
+		p[l] = (p[l] + troy[0]) % mod
+		# Next, we update according to whether we are updating a single field or not
+		if r > l:
+			p[l + 1] = (
+				(p[l + 1] + troy[1]) % mod -
+				(b * troy[0]) % mod
+			) % mod
+			p[r + 1] = (p[r + 1] - troy[r - l + 1]) % mod
+			p[r + 2] = (p[r + 2] + (a * troy[r - l]) % mod) % mod
+		else:
+			p[r + 1] = (p[r + 1] - (b * troy[0]) % mod) % mod
+			p[r + 2] = (p[r + 2] - (a * troy[0]) % mod) % mod
+
+
+	x[0] = (x[0] + p[0]) % mod
+	if n > 1:
+		p[1] = (p[1] + (b * p[0]) % mod) % mod
+		x[1] = (x[1] + p[1]) % mod
+	for i in range(2, n):
+		p[i] = (p[i] + (
+			a * p[i - 2]
+		) % mod + (
+			b * p[i - 1]
+		) % mod) % mod
+		x[i] = (x[i] + p[i]) % mod
+
+	sys.stdout.write(' '.join(map(str, x[:n])))
