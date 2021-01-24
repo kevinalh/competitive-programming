@@ -4,5 +4,6 @@
 !*.py
 !*/
 !.editorconfig
+!README.md
 
 build/
