@@ -4,6 +4,8 @@ https://codeforces.com/gym/100571/problem/B
 from typing import List
 
 
+mod = (10**9) + 7
+
 class Solution:
 
 	def __init__(self, a: int, b: int, x: List[int], troy: List[int], n: int) -> None:
@@ -12,30 +14,36 @@ class Solution:
 		self.troy = troy
 		self.x = x
 		self.n = n
-		self.mod = (10**9) + 7
 		self.p = [0] * (self.n + 5)
 
 	def update_from_bounds(self, l: int, r: int) -> None:
 		l -= 1
 		r -= 1
 		# First we do the obvious first update
-		self.p[l] += self.troy[0]
+		self.p[l] = (self.p[l] + self.troy[0]) % mod
 		# Next, we update according to whether we are updating a single field or not
 		if r > l:
-			self.p[l + 1] += self.troy[1] - (self.b * self.troy[0])
-			self.p[r + 1] -= self.troy[r - l + 1]
-			self.p[r + 2] -= self.a * self.troy[r - l]
+			self.p[l + 1] = (
+				(self.p[l + 1] + self.troy[1]) % mod -
+				(self.b * self.troy[0]) % mod
+			) % mod
+			self.p[r + 1] = (self.p[r + 1] - self.troy[r - l + 1]) % mod
+			self.p[r + 2] = (self.p[r + 2] + (self.a * self.troy[r - l]) % mod) % mod
 		elif r == l:
-			self.p[r + 1] -= self.b * self.troy[0]
-			self.p[r + 2] -= self.a * self.troy[0]
+			self.p[r + 1] = (self.p[r + 1] - (self.b * self.troy[0]) % mod) % mod
+			self.p[r + 2] = (self.p[r + 2] - (self.a * self.troy[0]) % mod) % mod
 
 	def sum_all(self) -> None:
 		if self.n > 1:
-			self.p[1] += (self.b * self.p[0])
+			self.p[1] = (self.p[1] + (self.b * self.p[0]) % mod) % mod
 		for i in range(2, self.n):
-			self.p[i] += (self.a * self.p[i - 2]) + (self.b * self.p[i - 1])
+			self.p[i] = (self.p[i] + (
+				self.a * self.p[i - 2]
+			) % mod + (
+				self.b * self.p[i - 1]
+			) % mod) % mod
 		for i in range(0, self.n):
-			self.x[i] = (self.x[i] + self.p[i]) % self.mod
+			self.x[i] = (self.x[i] + self.p[i]) % mod
 
 
 def compute_troynacci(f1: int, f2: int, a: int, b: int, n: int) -> List[int]:
@@ -43,7 +51,7 @@ def compute_troynacci(f1: int, f2: int, a: int, b: int, n: int) -> List[int]:
 	troy[0] = f1
 	troy[1] = f2
 	for i in range(2, n):
-		troy[i] = a * troy[i - 2] + b * troy[i - 1]
+		troy[i] = (a * troy[i - 2] + b * troy[i - 1]) % mod
 	return troy
 
 
